@@ -18,6 +18,10 @@ public class AnimalSO : ScriptableObject
     public float maxSpeed;
     [Range(0f,1f)]
     public float maxVision;
+    [Range(0f,1f)]
+    public float drinkSpeed;
+    [Range(0f,1f)]
+    public float eatSpeed;
 
 
 }

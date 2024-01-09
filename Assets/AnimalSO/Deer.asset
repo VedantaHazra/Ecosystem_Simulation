@@ -20,3 +20,5 @@ MonoBehaviour:
   maxHealth: 1
   maxSpeed: 1
   maxVision: 0.9
+  drinkSpeed: 0.1
+  eatSpeed: 0.1

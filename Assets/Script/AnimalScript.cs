@@ -17,6 +17,12 @@ public class AnimalScript : MonoBehaviour
     public float thirstyTime;
     public float hungerWeight;
     public float thirstWeight;
+
+    [Header("Surface Check")]
+    public float surfaceCheckRadius = 0.3f;
+    public Vector3 surfaceCheckOffset;
+    public LayerMask waterLayer;
+    private bool onWater = false;
     
     private void Start()
     {
@@ -28,6 +34,16 @@ public class AnimalScript : MonoBehaviour
     }
 
     private void Update()
+    {
+        UpdateFeatures();
+        CheckSurface();
+        if(onWater && thirst < animalSO.maxThirst)
+        {
+            DrinkWater();
+        }
+    }
+
+    private void UpdateFeatures()
     {
         health = (Math.Pow(hunger, hungerWeight) * Math.Pow(thirst, thirstWeight) * animalSO.maxHealth)/(Math.Pow(animalSO.maxHunger,hungerWeight) * Math.Pow(animalSO.maxThirst,thirstWeight));
 
@@ -55,5 +71,24 @@ public class AnimalScript : MonoBehaviour
     public void Die()
     {
         Destroy(gameObject);
+    }
+
+    private void CheckSurface()
+    {
+      onWater = Physics.CheckSphere(transform.TransformPoint(surfaceCheckOffset), surfaceCheckRadius,waterLayer);
+    }
+
+    private void DrinkWater()
+    {
+        thirst += animalSO.drinkSpeed * Time.deltaTime;
+        if(thirst > animalSO.maxThirst)
+        {
+            thirst = animalSO.maxThirst;
+        }
+    }
+
+    private void OnDrawGizmosSelected() {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.TransformPoint(surfaceCheckOffset), surfaceCheckRadius);
     }
 }
