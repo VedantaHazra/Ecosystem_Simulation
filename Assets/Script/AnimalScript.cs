@@ -90,4 +90,8 @@ public class AnimalScript : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(transform.TransformPoint(surfaceCheckOffset), surfaceCheckRadius);
     }
+    public double GetHealth()
+    {
+        return health;
+    }
 }

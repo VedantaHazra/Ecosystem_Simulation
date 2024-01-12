@@ -11,9 +11,9 @@ public class AnimalAgent : Agent
 
     private void Awake()
     {
-        animalScript = GetComponent<animalScript>();
+        animalScript = GetComponent<AnimalScript>();
     }
-    public override void OnActionReceived(ActionBuffers action)
+    public override void OnActionReceived(ActionBuffers actions)
     {
         float forwardAmount = 0f;
         float turnAmount = 0f;
@@ -43,22 +43,23 @@ public class AnimalAgent : Agent
         if (Input.GetKey(KeyCode.UpArrow)) turnAction = 1;
         if (Input.GetKey(KeyCode.DownArrow)) turnAction = 2;
 
-        ActionSegment<int> discreteActions = actioonsOut.DiscreteActions;
+        ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
         discreteActions[0] = forwardAction;
         discreteActions[1] = turnAction;
     }
 
     private void Update()
     {
-        if(animalScript.health < 0.3)
+        double health = animalScript.GetHealth();
+        if(health < 0.3)
         {
             AddReward(-1f);
         }
-        else if (animalScript.health < 0.5)
+        else if (health < 0.5)
         {
             AddReward(-0.8f);
         }
-        else if (animalScript.health < 0.8f)
+        else if (health < 0.8f)
         {
             AddReward(0.5f);
         }
