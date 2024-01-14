@@ -1,5 +1,3 @@
-// Some stupid rigidbody based movement by Dani
-
 using System;
 using UnityEngine;
 
@@ -14,6 +12,7 @@ public class PlayerMovement : MonoBehaviour {
 
     //Rotation and look
     private float xRotation;
+    private float mouseX;
     private float sensitivity = 50f;
     private float sensMultiplier = 1f;
     
@@ -39,7 +38,9 @@ public class PlayerMovement : MonoBehaviour {
     public float jumpForce = 550f;
     
     //Input
-    float x, y;
+    private float horizontalMovementInput;
+    private float verticalMovementInput;
+
     bool jumping, sprinting, crouching;
     
     //Sliding
@@ -62,51 +63,32 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void Update() {
-        MyInput();
+        // MyInput();
         Look();
     }
-
-    /// <summary>
+    
+    
+   // Function to set input data
     /// Find user input. Should put this in its own class but im lazy
-    /// </summary>
-    private void MyInput() {
-        x = Input.GetAxisRaw("Horizontal");
-        y = Input.GetAxisRaw("Vertical");
+    public void MyInput(float a, float b)
+    {
+        // int turnAmountMultiplier = 90;
+        
+        // horizontalMovementInput =;
+        verticalMovementInput= a;
+        mouseX = b ;
         jumping = Input.GetButton("Jump");
-        crouching = Input.GetKey(KeyCode.LeftControl);
-      
-        //Crouching
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-            StartCrouch();
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-            StopCrouch();
     }
 
-    private void StartCrouch() {
-        transform.localScale = crouchScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
-        if (rb.velocity.magnitude > 0.5f) {
-            if (grounded) {
-                rb.AddForce(orientation.transform.forward * slideForce);
-            }
-        }
-    }
 
-    private void StopCrouch() {
-        transform.localScale = playerScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-    }
 
     private void Movement() {
-        //Extra gravity
-        rb.AddForce(Vector3.down * Time.deltaTime * 10);
-        
         //Find actual velocity relative to where player is looking
         Vector2 mag = FindVelRelativeToLook();
         float xMag = mag.x, yMag = mag.y;
 
         //Counteract sliding and sloppy movement
-        CounterMovement(x, y, mag);
+        CounterMovement(horizontalMovementInput,verticalMovementInput, mag);
         
         //If holding jump && ready to jump, then jump
         if (readyToJump && jumping) Jump();
@@ -116,15 +98,15 @@ public class PlayerMovement : MonoBehaviour {
         
         //If sliding down a ramp, add force down so player stays grounded and also builds speed
         if (crouching && grounded && readyToJump) {
-            rb.AddForce(Vector3.down * Time.deltaTime * 3000);
+            rb.AddForce(Vector3.down * (Time.deltaTime * 3000));
             return;
         }
         
         //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
-        if (x > 0 && xMag > maxSpeed) x = 0;
-        if (x < 0 && xMag < -maxSpeed) x = 0;
-        if (y > 0 && yMag > maxSpeed) y = 0;
-        if (y < 0 && yMag < -maxSpeed) y = 0;
+        if (horizontalMovementInput > 0 && xMag > maxSpeed) horizontalMovementInput = 0;
+        if (horizontalMovementInput < 0 && xMag < -maxSpeed) horizontalMovementInput = 0;
+        if (verticalMovementInput> 0 && yMag > maxSpeed)verticalMovementInput= 0;
+        if (verticalMovementInput< 0 && yMag < -maxSpeed)verticalMovementInput= 0;
 
         //Some multipliers
         float multiplier = 1f, multiplierV = 1f;
@@ -139,8 +121,8 @@ public class PlayerMovement : MonoBehaviour {
         if (grounded && crouching) multiplierV = 0f;
 
         //Apply forces to move player
-        rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-        rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
+        rb.AddForce(orientation.transform.forward * (verticalMovementInput* moveSpeed * Time.deltaTime * multiplier * multiplierV));
+        rb.AddForce(orientation.transform.right * (horizontalMovementInput * moveSpeed * Time.deltaTime * multiplier));
     }
 
     private void Jump() {
@@ -148,8 +130,8 @@ public class PlayerMovement : MonoBehaviour {
             readyToJump = false;
 
             //Add jump forces
-            rb.AddForce(Vector2.up * jumpForce * 1.5f);
-            rb.AddForce(normalVector * jumpForce * 0.5f);
+            rb.AddForce(Vector2.up * (jumpForce * 1.5f));
+            rb.AddForce(normalVector * (jumpForce * 0.5f));
             
             //If jumping while falling, reset y velocity.
             Vector3 vel = rb.velocity;
@@ -168,15 +150,15 @@ public class PlayerMovement : MonoBehaviour {
     
     private float desiredX;
     private void Look() {
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+        // float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+        // float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
 
         //Find current look rotation
         Vector3 rot = playerCam.transform.localRotation.eulerAngles;
         desiredX = rot.y + mouseX;
         
         //Rotate, and also make sure we dont over- or under-rotate.
-        xRotation -= mouseY;
+        // xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         //Perform the rotations
@@ -189,16 +171,16 @@ public class PlayerMovement : MonoBehaviour {
 
         //Slow down sliding
         if (crouching) {
-            rb.AddForce(moveSpeed * Time.deltaTime * -rb.velocity.normalized * slideCounterMovement);
+            rb.AddForce(moveSpeed * Time.deltaTime * slideCounterMovement * -rb.velocity.normalized);
             return;
         }
 
         //Counter movement
-        if (Math.Abs(mag.x) > threshold && Math.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0)) {
-            rb.AddForce(moveSpeed * orientation.transform.right * Time.deltaTime * -mag.x * counterMovement);
+        if (Math.Abs(mag.x) > threshold && Math.Abs(horizontalMovementInput) < 0.05f || (mag.x < -threshold && horizontalMovementInput > 0) || (mag.x > threshold && horizontalMovementInput < 0)) {
+            rb.AddForce(moveSpeed * Time.deltaTime * -mag.x * counterMovement * orientation.transform.right);
         }
-        if (Math.Abs(mag.y) > threshold && Math.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0)) {
-            rb.AddForce(moveSpeed * orientation.transform.forward * Time.deltaTime * -mag.y * counterMovement);
+        if (Math.Abs(mag.y) > threshold && Math.Abs(y) < 0.05f || (mag.y < -threshold &&verticalMovementInput> 0) || (mag.y > threshold &&verticalMovementInput< 0)) {
+            rb.AddForce(moveSpeed  * Time.deltaTime * -mag.y * counterMovement * orientation.transform.forward);
         }
         
         //Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
@@ -209,11 +191,9 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    /// <summary>
     /// Find the velocity relative to where the player is looking
     /// Useful for vectors calculations regarding movement and limiting movement
-    /// </summary>
-    /// <returns></returns>
+
     public Vector2 FindVelRelativeToLook() {
         float lookAngle = orientation.transform.eulerAngles.y;
         float moveAngle = Mathf.Atan2(rb.velocity.x, rb.velocity.z) * Mathf.Rad2Deg;

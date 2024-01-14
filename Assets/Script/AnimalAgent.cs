@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,11 +9,15 @@ using Unity.MLAgents.Sensors;
 public class AnimalAgent : Agent
 {
     private AnimalScript animalScript;
+    private PlayerMovement playerMovement;
 
-    private void Awake()
+    
+    private void Start()
     {
         animalScript = GetComponent<AnimalScript>();
+        playerMovement = GetComponent<PlayerMovement>();
     }
+
     public override void OnActionReceived(ActionBuffers actions)
     {
         float forwardAmount = 0f;
@@ -31,25 +36,30 @@ public class AnimalAgent : Agent
             case 1 : turnAmount = 1f; break;
             case 2 : turnAmount = -1f; break;
         }
+        
+        playerMovement.MyInput(forwardAmount, turnAmount);
+        
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         int forwardAction = 0;
-        if (Input.GetKey(KeyCode.UpArrow)) forwardAction = 1;
-        if (Input.GetKey(KeyCode.DownArrow)) forwardAction = 2;
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) ) forwardAction = 1;
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S) ) forwardAction = 2;
 
         int turnAction = 0;
-        if (Input.GetKey(KeyCode.UpArrow)) turnAction = 1;
-        if (Input.GetKey(KeyCode.DownArrow)) turnAction = 2;
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ) turnAction = 1;
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ) turnAction = 2;
 
         ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
         discreteActions[0] = forwardAction;
         discreteActions[1] = turnAction;
+        
     }
 
     private void Update()
     {
+        
         double health = animalScript.GetHealth();
         if(health < 0.3)
         {

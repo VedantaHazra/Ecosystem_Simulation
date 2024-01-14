@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class AnimalScript : MonoBehaviour
 {
+    
     public AnimalSO animalSO;
    
     private float hunger;
