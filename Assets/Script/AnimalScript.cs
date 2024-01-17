@@ -70,7 +70,7 @@ public class AnimalScript : MonoBehaviour
 
     public void Die()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     private void CheckSurface()
@@ -94,5 +94,10 @@ public class AnimalScript : MonoBehaviour
     public double GetHealth()
     {
         return health;
+    }
+    public void SetHealth()
+    {
+        thirst = 1f;
+        hunger = 1f;
     }
 }

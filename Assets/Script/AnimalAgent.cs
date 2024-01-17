@@ -18,6 +18,12 @@ public class AnimalAgent : Agent
         playerMovement = GetComponent<PlayerMovement>();
     }
 
+    public override void OnEpisodeBegin()
+    {
+        animalScript.SetHealth();
+        transform.position = Vector3.zero;
+    }
+
     public override void OnActionReceived(ActionBuffers actions)
     {
         float forwardAmount = 0f;
@@ -59,8 +65,15 @@ public class AnimalAgent : Agent
 
     private void Update()
     {
+
         
         double health = animalScript.GetHealth();
+
+        if(health<0.1f)
+        {
+            EndEpisode();
+        }
+
         if(health < 0.3)
         {
             AddReward(-1f);
@@ -76,5 +89,6 @@ public class AnimalAgent : Agent
         else{
             AddReward(1f);
         }
+        
     }
 }
