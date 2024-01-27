@@ -10,8 +10,15 @@ public class AnimalAgent : Agent
 {
     private AnimalScript animalScript;
     private PlayerMovement playerMovement;
+    public Transform waterPoint;
 
-    
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(transform.position);
+        sensor.AddObservation(waterPoint.position);
+    }
+
+
     private void Start()
     {
         animalScript = GetComponent<AnimalScript>();
