@@ -22,8 +22,9 @@ public class AnimalScript : MonoBehaviour
     public float surfaceCheckRadius = 0.3f;
     public Vector3 surfaceCheckOffset;
     public LayerMask waterLayer;
+    public LayerMask forestLayer;
     private bool onWater = false;
-    
+   // private bool onForest = false;
     private void Start()
     {
         health = animalSO.maxHealth;
@@ -41,6 +42,12 @@ public class AnimalScript : MonoBehaviour
         {
             DrinkWater();
         }
+        
+      //  if(onForest && hunger < animalSO.maxHunger)
+     //   {
+    //        Eat();
+     //   }
+        
     }
 
     private void UpdateFeatures()
@@ -70,12 +77,13 @@ public class AnimalScript : MonoBehaviour
 
     public void Die()
     {
-        //Destroy(gameObject);
+        health = 0;
     }
 
     private void CheckSurface()
     {
       onWater = Physics.CheckSphere(transform.TransformPoint(surfaceCheckOffset), surfaceCheckRadius,waterLayer);
+      //onForest = Physics.CheckSphere(transform.TransformPoint(surfaceCheckOffset), surfaceCheckRadius,forestLayer);
     }
 
     private void DrinkWater()
@@ -99,5 +107,40 @@ public class AnimalScript : MonoBehaviour
     {
         thirst = 1f;
         hunger = 1f;
+    }
+    
+    private void Eat()
+    {
+        hunger += animalSO.eatSpeed * Time.deltaTime;
+        if(hunger > animalSO.maxHunger)
+        {
+            hunger = animalSO.maxHunger;
+        }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        AnimalScript animalCollided = other.GetComponent<AnimalScript>();
+        if (animalCollided != null)
+        {
+            int hisFoodChainPosition = animalCollided.animalSO.foodChainPosition;
+            int myFoodChainPosition = animalSO.foodChainPosition;
+
+            if (myFoodChainPosition == hisFoodChainPosition + 1 )
+            {
+                hunger += animalSO.eatSpeed * animalSO.maxHunger;
+               // animalCollided.Die();
+                if (other.tag == "Plant")
+                {
+                    Destroy(other.gameObject);
+                }
+                else
+                {
+                    AnimalAgent animalAgent = other.GetComponent<AnimalAgent>();
+                    animalAgent.EndEpisode();
+                }
+            }
+        }
+        
     }
 }

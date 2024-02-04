@@ -14,8 +14,8 @@ public class AnimalAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.position);
-        sensor.AddObservation(waterPoint.position);
+        //sensor.AddObservation(transform.position);
+       // sensor.AddObservation(waterPoint.position);
     }
 
 
@@ -28,7 +28,7 @@ public class AnimalAgent : Agent
     public override void OnEpisodeBegin()
     {
         animalScript.SetHealth();
-        transform.position = Vector3.zero;
+        transform.localPosition = animalScript.animalSO.initialPos;
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -39,15 +39,15 @@ public class AnimalAgent : Agent
         switch(actions.DiscreteActions[0])
         {
             case 0 : forwardAmount = 0f; break;
-            case 1 : forwardAmount = 1f; break;
-            case 2 : forwardAmount = -1f; break;
+            case 1 : forwardAmount = 2f; break;
+            case 2 : forwardAmount = -2f; break;
         }
 
         switch(actions.DiscreteActions[1])
         {
             case 0 : turnAmount = 0f; break;
-            case 1 : turnAmount = 1f; break;
-            case 2 : turnAmount = -1f; break;
+            case 1 : turnAmount = 2f; break;
+            case 2 : turnAmount = -2f; break;
         }
         
         playerMovement.MyInput(forwardAmount, turnAmount);

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 10f9761ee779c4830956a60d59db3fc1, type: 3}
-  m_Name: Deer
+  m_Name: Plant
   m_EditorClassIdentifier: 
-  name: Deer
+  name: Plant
   initialPos: {x: 0, y: 0, z: 0}
-  foodChainPosition: 1
-  intelligence: 0.7
-  maxHunger: 0.8
-  maxThirst: 1
+  foodChainPosition: 0
+  intelligence: 0
+  maxHunger: 0
+  maxThirst: 0
   maxHealth: 1
-  maxSpeed: 1
-  maxVision: 0.9
-  drinkSpeed: 0.1
-  eatSpeed: 0.4
+  maxSpeed: 0
+  maxVision: 0
+  drinkSpeed: 0
+  eatSpeed: 0

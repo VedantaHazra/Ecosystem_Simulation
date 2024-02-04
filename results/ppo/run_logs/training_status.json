@@ -1,7 +1,38 @@
 {
+    "Animal Agent": {
+        "checkpoints": [
+            {
+                "steps": 499984,
+                "file_path": "results\\ppo\\Animal Agent\\Animal Agent-499984.onnx",
+                "reward": 6.013332961002986,
+                "creation_time": 1706987291.7355065,
+                "auxillary_file_paths": [
+                    "results\\ppo\\Animal Agent\\Animal Agent-499984.pt"
+                ]
+            },
+            {
+                "steps": 500022,
+                "file_path": "results\\ppo\\Animal Agent\\Animal Agent-500022.onnx",
+                "reward": 6.077419004132671,
+                "creation_time": 1706987291.7846708,
+                "auxillary_file_paths": [
+                    "results\\ppo\\Animal Agent\\Animal Agent-500022.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500022,
+            "file_path": "results\\ppo\\Animal Agent.onnx",
+            "reward": 6.077419004132671,
+            "creation_time": 1706987291.7846708,
+            "auxillary_file_paths": [
+                "results\\ppo\\Animal Agent\\Animal Agent-500022.pt"
+            ]
+        }
+    },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "0.30.0",
-        "torch_version": "1.11.0"
+        "torch_version": "1.7.1+cu110"
     }
 }

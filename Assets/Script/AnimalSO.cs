@@ -5,6 +5,7 @@ using UnityEngine;
 public class AnimalSO : ScriptableObject
 {
     public new string name;
+    public Vector3 initialPos;
     public int foodChainPosition;
     [Range(0f,1f)]
     public float intelligence;
